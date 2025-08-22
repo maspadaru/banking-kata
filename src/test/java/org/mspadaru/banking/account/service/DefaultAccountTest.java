@@ -16,6 +16,24 @@ import static org.mockito.Mockito.verify;
 class DefaultAccountTest {
 
     @Test
+    void withdraw_positiveBalance_printStatementPrintsCorrectTransaction() {
+        StatementPrinter mockPrinter = mock(StatementPrinter.class);
+        Account account = new DefaultAccount(mockPrinter);
+
+        account.deposit(1000);
+        account.withdraw(100);
+        account.printStatement();
+
+        ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
+        verify(mockPrinter).printStatement(captor.capture());
+        List<Transaction> transactions = captor.getValue();
+        assertEquals(2, transactions.size());
+        Transaction transaction = transactions.get(1);
+        assertTransaction(transaction, TransactionType.WITHDRAW, 100, 900);
+        assertNotNull(transaction.date());
+    }
+
+    @Test
     void deposit_positiveAmount_printStatementPrintsCorrectTransaction() {
         StatementPrinter mockPrinter = mock(StatementPrinter.class);
         Account account = new DefaultAccount(mockPrinter);
