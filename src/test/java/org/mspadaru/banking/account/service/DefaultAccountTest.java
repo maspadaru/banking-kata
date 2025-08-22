@@ -34,6 +34,53 @@ class DefaultAccountTest {
     }
 
     @Test
+    void withdraw_amountMoreThanBalance_throwsException() {
+        StatementPrinter mockPrinter = mock(StatementPrinter.class);
+        Account account = new DefaultAccount(mockPrinter);
+        account.deposit(100);
+        assertThrows(IllegalStateException.class, () -> account.withdraw(200));
+    }
+
+    @Test
+    void withdraw_zeroAmount_throwsException() {
+        StatementPrinter mockPrinter = mock(StatementPrinter.class);
+        Account account = new DefaultAccount(mockPrinter);
+        assertThrows(IllegalArgumentException.class, () -> account.withdraw(0));
+    }
+
+    @Test
+    void withdraw_negativeAmount_throwsException() {
+        StatementPrinter mockPrinter = mock(StatementPrinter.class);
+        Account account = new DefaultAccount(mockPrinter);
+        assertThrows(IllegalArgumentException.class, () -> account.withdraw(-100));
+    }
+
+    @Test
+    void withdraw_multipleTransactions_reflectedInStatement() {
+        StatementPrinter mockPrinter = mock(StatementPrinter.class);
+        Account account = new DefaultAccount(mockPrinter);
+
+        account.deposit(1000);
+        account.withdraw(100);
+        account.withdraw(200);
+        account.withdraw(300);
+        account.printStatement();
+
+        ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
+        verify(mockPrinter).printStatement(captor.capture());
+        List<Transaction> transactions = captor.getValue();
+        assertEquals(4, transactions.size());
+
+        Transaction second = transactions.get(1);
+        Transaction third = transactions.get(2);
+        Transaction fourth = transactions.get(3);
+
+        assertTransaction(second, TransactionType.WITHDRAW, 100, 900);
+        assertTransaction(third, TransactionType.WITHDRAW, 200, 700);
+        assertTransaction(fourth, TransactionType.WITHDRAW, 300, 400);
+    }
+
+    @Test
     void deposit_positiveAmount_printStatementPrintsCorrectTransaction() {
         StatementPrinter mockPrinter = mock(StatementPrinter.class);
         Account account = new DefaultAccount(mockPrinter);
@@ -84,12 +131,12 @@ class DefaultAccountTest {
         Transaction first = transactions.get(0);
         Transaction second = transactions.get(1);
         Transaction third = transactions.get(2);
-        Transaction forth = transactions.get(3);
+        Transaction fourth = transactions.get(3);
 
         assertTransaction(first, TransactionType.DEPOSIT, 100, 100);
         assertTransaction(second, TransactionType.DEPOSIT, 200, 300);
         assertTransaction(third, TransactionType.DEPOSIT, 300, 600);
-        assertTransaction(forth, TransactionType.DEPOSIT, 400, 1000);
+        assertTransaction(fourth, TransactionType.DEPOSIT, 400, 1000);
     }
 
 

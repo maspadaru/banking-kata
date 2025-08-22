@@ -33,6 +33,12 @@ public class DefaultAccount implements Account {
 
     @Override
     public void withdraw(int amount) {
+        if (amount > balance) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
         balance -= amount;
         Transaction transaction = new Transaction(LocalDateTime.now(), amount, balance, TransactionType.WITHDRAW);
         transactions.add(transaction);
