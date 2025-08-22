@@ -22,9 +22,13 @@ public class DefaultAccount implements Account {
 
     @Override
     public void deposit(int amount) {
-        balance += amount;
-        Transaction transaction = new Transaction(LocalDateTime.now(), amount, balance, TransactionType.DEPOSIT);
-        transactions.add(transaction);
+        if (amount > 0) {
+            balance += amount;
+            Transaction transaction = new Transaction(LocalDateTime.now(), amount, balance, TransactionType.DEPOSIT);
+            transactions.add(transaction);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
