@@ -3,7 +3,7 @@ package org.mspadaru.banking.account.service;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mspadaru.banking.account.api.Account;
-import org.mspadaru.banking.account.output.StatementPrinter;
+import org.mspadaru.banking.account.formatter.StatementFormatter;
 import org.mspadaru.banking.account.service.model.Transaction;
 import org.mspadaru.banking.account.service.model.TransactionType;
 
@@ -17,15 +17,15 @@ class DefaultAccountTest {
 
     @Test
     void withdraw_positiveBalance_printStatementPrintsCorrectTransaction() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
 
         account.deposit(1000);
         account.withdraw(100);
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockPrinter).printStatement(captor.capture());
+        verify(mockFormatter).formatStatement(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(2, transactions.size());
         Transaction transaction = transactions.get(1);
@@ -35,30 +35,30 @@ class DefaultAccountTest {
 
     @Test
     void withdraw_amountMoreThanBalance_throwsException() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
         account.deposit(100);
         assertThrows(IllegalStateException.class, () -> account.withdraw(200));
     }
 
     @Test
     void withdraw_zeroAmount_throwsException() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
         assertThrows(IllegalArgumentException.class, () -> account.withdraw(0));
     }
 
     @Test
     void withdraw_negativeAmount_throwsException() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
         assertThrows(IllegalArgumentException.class, () -> account.withdraw(-100));
     }
 
     @Test
     void withdraw_multipleTransactions_reflectedInStatement() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
 
         account.deposit(1000);
         account.withdraw(100);
@@ -67,7 +67,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockPrinter).printStatement(captor.capture());
+        verify(mockFormatter).formatStatement(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(4, transactions.size());
 
@@ -82,14 +82,14 @@ class DefaultAccountTest {
 
     @Test
     void deposit_positiveAmount_printStatementPrintsCorrectTransaction() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
 
         account.deposit(100);
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockPrinter).printStatement(captor.capture());
+        verify(mockFormatter).formatStatement(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(1, transactions.size());
         Transaction transaction = transactions.getFirst();
@@ -100,22 +100,22 @@ class DefaultAccountTest {
 
     @Test
     void deposit_negativeAmount_throwsException() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
         assertThrows(IllegalArgumentException.class, () -> account.deposit(-100));
     }
 
     @Test
     void deposit_zeroAmount_throwsException() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
         assertThrows(IllegalArgumentException.class, () -> account.deposit(-100));
     }
 
     @Test
     void deposit_multipleSmallDeposits_accumulateBalanceAndPrintAllTransactions() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
 
         account.deposit(100);
         account.deposit(200);
@@ -124,7 +124,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockPrinter).printStatement(captor.capture());
+        verify(mockFormatter).formatStatement(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(4, transactions.size());
 
@@ -142,15 +142,15 @@ class DefaultAccountTest {
 
     @Test
     void deposit_largeDeposit_registersAndDoesNotOverflowBalance() {
-        StatementPrinter mockPrinter = mock(StatementPrinter.class);
-        Account account = new DefaultAccount(mockPrinter);
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
 
         account.deposit(100);
         account.deposit(Integer.MAX_VALUE);
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockPrinter).printStatement(captor.capture());
+        verify(mockFormatter).formatStatement(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(2, transactions.size());
         Transaction second = transactions.get(1);

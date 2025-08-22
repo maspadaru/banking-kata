@@ -6,6 +6,6 @@ public interface Account {
 
     void withdraw(int amount);
 
-    void printStatement();
+    String printStatement();
 
 }

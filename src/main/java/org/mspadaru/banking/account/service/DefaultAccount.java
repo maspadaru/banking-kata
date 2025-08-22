@@ -1,7 +1,7 @@
 package org.mspadaru.banking.account.service;
 
 import org.mspadaru.banking.account.api.Account;
-import org.mspadaru.banking.account.output.StatementPrinter;
+import org.mspadaru.banking.account.formatter.StatementFormatter;
 import org.mspadaru.banking.account.service.model.Transaction;
 import org.mspadaru.banking.account.service.model.TransactionType;
 
@@ -11,12 +11,12 @@ import java.util.List;
 
 public class DefaultAccount implements Account {
 
-    private final StatementPrinter statementPrinter;
+    private final StatementFormatter statementFormatter;
     private final List<Transaction> transactions;
     private long balance;
 
-    public DefaultAccount(StatementPrinter statementPrinter) {
-        this.statementPrinter = statementPrinter;
+    public DefaultAccount(StatementFormatter statementFormatter) {
+        this.statementFormatter = statementFormatter;
         this.transactions = new ArrayList<>();
     }
 
@@ -45,7 +45,7 @@ public class DefaultAccount implements Account {
     }
 
     @Override
-    public void printStatement() {
-        statementPrinter.printStatement(transactions);
+    public String printStatement() {
+        return statementFormatter.formatStatement(transactions);
     }
 }
