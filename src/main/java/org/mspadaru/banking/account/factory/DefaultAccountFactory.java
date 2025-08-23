@@ -1,5 +1,7 @@
-package org.mspadaru.banking.account.api;
+package org.mspadaru.banking.account.factory;
 
+import org.mspadaru.banking.account.api.Account;
+import org.mspadaru.banking.account.api.AccountFactory;
 import org.mspadaru.banking.account.formatter.DefaultStatementFormatter;
 import org.mspadaru.banking.account.service.DefaultAccount;
 
