@@ -26,13 +26,13 @@ Date | Amount | Balance
 ## ✅ Design Highlights
 
 - Implemented using **TDD**
-- Fully tested 
+- Fully tested with clear, focused unit tests
 - Clean separation of concerns:
   - `Account` interface for business operations
   - `Transaction` model with type, amount, balance, and timestamp
-  - `StatementPrinter` for output logic
-  - `TransactionFormatter` for customizable formatting
-- Easy to extend or replace output mechanisms (e.g., console, file, REST)
+  - `StatementFormatter` for customizable output
+- Easily extendable (e.g., support for JSON, XML, or other output formats)
+- Pluggable factories for different account configurations
 
 ---
 
@@ -64,8 +64,9 @@ Run all tests:
 ## 📂 Project Structure
 
 account/
-├── api/             → Public-facing Account interface
-├── service/         → Business logic 
-├── output/          → Statement formatting and printing
+├── api/             → Public-facing interfaces (Account, AccountFactory)
+├── service/         → Business logic and models 
+├── formatter/       → Statement formatting (text, JSON, etc.)
+├── factory/         → Factories to create accounts with various formatters
 
 
