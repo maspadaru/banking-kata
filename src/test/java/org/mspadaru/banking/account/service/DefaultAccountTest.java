@@ -10,10 +10,22 @@ import org.mspadaru.banking.account.service.model.TransactionType;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class DefaultAccountTest {
+
+    @Test
+    void printStatement_withTransactions_callsFormatter() {
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        Account account = new DefaultAccount(mockFormatter);
+        account.deposit(1000);
+
+        account.printStatement();
+
+        verify(mockFormatter).format(anyList());
+    }
 
     @Test
     void withdraw_positiveBalance_printStatementPrintsCorrectTransaction() {
@@ -25,7 +37,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockFormatter).formatStatement(captor.capture());
+        verify(mockFormatter).format(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(2, transactions.size());
         Transaction transaction = transactions.get(1);
@@ -67,7 +79,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockFormatter).formatStatement(captor.capture());
+        verify(mockFormatter).format(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(4, transactions.size());
 
@@ -89,7 +101,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockFormatter).formatStatement(captor.capture());
+        verify(mockFormatter).format(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(1, transactions.size());
         Transaction transaction = transactions.getFirst();
@@ -124,7 +136,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockFormatter).formatStatement(captor.capture());
+        verify(mockFormatter).format(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(4, transactions.size());
 
@@ -150,7 +162,7 @@ class DefaultAccountTest {
         account.printStatement();
 
         ArgumentCaptor<List<Transaction>> captor = ArgumentCaptor.forClass(List.class);
-        verify(mockFormatter).formatStatement(captor.capture());
+        verify(mockFormatter).format(captor.capture());
         List<Transaction> transactions = captor.getValue();
         assertEquals(2, transactions.size());
         Transaction second = transactions.get(1);
@@ -161,8 +173,8 @@ class DefaultAccountTest {
     private void assertTransaction(Transaction t, TransactionType expectedType, int expectedAmount,
                                    long expectedBalance) {
         assertEquals(expectedType, t.type());
-        assertEquals(expectedAmount, t.Amount());
-        assertEquals(expectedBalance, t.Balance());
+        assertEquals(expectedAmount, t.amount());
+        assertEquals(expectedBalance, t.balance());
     }
 
 }

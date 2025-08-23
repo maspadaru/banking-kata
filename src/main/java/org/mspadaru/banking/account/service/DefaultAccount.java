@@ -46,6 +46,6 @@ public class DefaultAccount implements Account {
 
     @Override
     public String printStatement() {
-        return statementFormatter.formatStatement(transactions);
+        return statementFormatter.format(transactions);
     }
 }
