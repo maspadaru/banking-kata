@@ -7,6 +7,7 @@ import org.mspadaru.banking.account.formatter.StatementFormatter;
 import org.mspadaru.banking.account.service.model.Transaction;
 import org.mspadaru.banking.account.service.model.TransactionType;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,6 +155,20 @@ class DefaultAccountTest {
 
     @Test
     void deposit_largeDeposit_registersAndDoesNotOverflowBalance() {
+        StatementFormatter mockFormatter = mock(StatementFormatter.class);
+        DefaultAccount account = new DefaultAccount(mockFormatter);
+        try {
+            Field balanceField = DefaultAccount.class.getDeclaredField("balance");
+            balanceField.setAccessible(true);
+            balanceField.setLong(account, Long.MAX_VALUE);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        assertThrows(ArithmeticException.class, () -> account.deposit(1));
+    }
+
+    @Test
+    void deposit_amountOverflowsBalance_throwsException() {
         StatementFormatter mockFormatter = mock(StatementFormatter.class);
         Account account = new DefaultAccount(mockFormatter);
 

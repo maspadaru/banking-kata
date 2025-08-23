@@ -23,7 +23,7 @@ public class DefaultAccount implements Account {
     @Override
     public void deposit(int amount) {
         if (amount > 0) {
-            balance += amount;
+            balance = Math.addExact(amount, balance);
             Transaction transaction = new Transaction(LocalDateTime.now(), amount, balance, TransactionType.DEPOSIT);
             transactions.add(transaction);
         } else {
