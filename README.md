@@ -36,6 +36,16 @@ Date | Amount | Balance
 
 ---
 
+⚠️ Design Disclaimer
+
+The current design couples the Account interface to a specific StatementFormatter. While it is not ideal for real-world applications, the kata requires Account to have a `String printStatement()` method that returns a formatted String. 
+
+In a more extensible design, the Account would expose a method `List<Transaction> getTransactions()`, and formatting and output concerns would be fully decoupled. This allows greater flexibility for rendering statements to various formats (e.g., HTML, JSON, PDF) or sending them over different mediums (e.g., CLI, web, file system).
+
+However, the kata explicitly specifies a `String printStatement()` method as part of the Account interface. Therefore, the current solution reflects a best effort within the given constraints, while still aiming for clean code and testable components.
+
+---
+
 ## 🚀 How to Run
 
 Run the application from the command line:
