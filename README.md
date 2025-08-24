@@ -72,11 +72,11 @@ Run all tests:
 - GitHub Actions (CI)
 
 ## 📂 Project Structure
-
+```
 account/
 ├── api/             → Public-facing interfaces (Account, AccountFactory)
 ├── service/         → Business logic and models 
 ├── formatter/       → Statement formatting (text, JSON, etc.)
 ├── factory/         → Factories to create accounts with various formatters
-
+```
 
